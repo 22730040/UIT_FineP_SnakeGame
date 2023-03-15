@@ -5,5 +5,8 @@ const scoreRouter = require('./score_router')
 
 rootRouter.use('/users', userRouter)
 rootRouter.use('/scores', scoreRouter)
+rootRouter.get('/', (req, res) => {
+  res.send('OK')
+})
 
 module.exports = rootRouter
