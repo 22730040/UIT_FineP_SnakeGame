@@ -1,0 +1,11 @@
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS "scores"(
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    score NUMERIC NOT NULL,
+    userId UUID NOT NULL REFERENCES users(id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+COMMIT;
