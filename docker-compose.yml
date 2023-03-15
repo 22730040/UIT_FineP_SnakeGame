@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  db:
+    container_name: snake-db
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=snake
+      - POSTGRES_PASSWORD=snake
+
+  db-migrate:
+    container_name: snake-db-migrate
+    image: migrate/migrate:latest
+    volumes:
+      - ./data/migrations:/migrations
+    command:
+      [
+      "-path",
+      "/migrations",
+      "-database",
+      "postgres://snake:snake@db:5432/snake?sslmode=disable",
+      "up"
+      ]
