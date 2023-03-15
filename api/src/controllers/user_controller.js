@@ -96,4 +96,26 @@ const signIn = async (req, res) => {
   }
 }
 
-module.exports = { createUser, signIn }
+const getUsers = async (req, res) => {
+  const { limit = 10, page = 1 } = req.query
+  try {
+    const users = await User.find()
+      .skip(limit * page - limit)
+      .limit(limit)
+    handleResponse(res, StatusOK, {
+      code: StatusOK,
+      users: users.map(user => ({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      })),
+    })
+  } catch (error) {
+    handleResponse(res, StatusInternalError, {
+      code: StatusInternalError,
+      message: error.message,
+    })
+  }
+}
+
+module.exports = { createUser, signIn, getUsers }

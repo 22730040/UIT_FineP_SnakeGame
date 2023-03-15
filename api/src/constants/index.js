@@ -26,6 +26,10 @@ const ErrNoUserFound = {
   code: 404,
   message: 'No user found!',
 }
+const ErrUnAuthorized = {
+  code: 401,
+  message: 'Unauthorized action!',
+}
 const StatusCreated = 201
 const StatusInternalError = 500
 const StatusOK = 200
@@ -41,4 +45,5 @@ module.exports = {
   StatusOK,
   ErrWrongLoginInfo,
   ErrNoUserFound,
+  ErrUnAuthorized,
 }
