@@ -4,7 +4,7 @@
 /* eslint-disable no-shadow */
 /* eslint-disable import/no-cycle */
 import React, { useEffect, useState } from 'react';
-import { Howl, Howler } from 'howler';
+import { Howl } from 'howler';
 import { SEGMENT_SIZE } from '../draw/draw';
 import randomPositionOnGrid from '../utils/randomPositionOnGrid';
 import useInterval from '../utils/useInterval';
@@ -26,6 +26,15 @@ export enum Direction {
   RIGHT,
 }
 
+const sfx = {
+  push: new Howl({
+    src: 'https://assets.codepen.io/21542/howler-push.mp3',
+    onend: () => {
+      console.log('Done playing sfx!');
+    },
+  }),
+};
+
 const MOVEMENT_SPEED = 100;
 
 interface UseGameLogicArgs {
@@ -33,6 +42,7 @@ interface UseGameLogicArgs {
   canvasHeight?: number;
   onGameOver: () => void;
   gameState: GameState;
+  setOpenModalOver: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const useGameLogic = ({
@@ -40,6 +50,7 @@ const useGameLogic = ({
   canvasWidth,
   onGameOver,
   gameState,
+  setOpenModalOver,
 }: UseGameLogicArgs) => {
   const [direction, setDirection] = useState<Direction | undefined>();
   const [snakeBody, setSnakeBody] = useState<Position[]>([
@@ -182,7 +193,8 @@ const useGameLogic = ({
       const isGameOver = hasSnakeEatenItself(snakeBodyAfterMovement);
       if (isGameOver) {
         onGameOver();
-        sound.play();
+        // open modal game over
+        setOpenModalOver(true);
       }
     }
 
@@ -206,6 +218,7 @@ const useGameLogic = ({
         }),
         y: randomPositionOnGrid({ threshold: canvasHeight! }),
       });
+      sfx.push.play();
     } else if (snakeBodyAfterMovement) {
       setSnakeBody(snakeBodyAfterMovement);
     }

@@ -1,8 +1,4 @@
 @font-face {
-  font-family: 'primary';
-  src: local('primary'), url(./Robus-BWqOd.otf) format('opentype');
-}
-@font-face {
   font-family: 'secondary';
   src: local('secondary'), url(./PressStart2P.ttf) format('opentype');
 }
@@ -16,8 +12,8 @@
   height: 100vh;
   display: flex;
   flex: 1;
-  flexdirection: row;
-  flexwrap: wrap;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .snake-container {
@@ -66,18 +62,8 @@
   height: 600px;
 
   border-radius: 12px;
-
-  background: #d3959b; /* fallback for old browsers */
-  background: -webkit-linear-gradient(
-    to right,
-    #bfe6ba,
-    #d3959b
-  ); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(
-    to right,
-    #bfe6ba,
-    #d3959b
-  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background-color: #8ec5fc;
+  background-image: linear-gradient(62deg, #8ec5fc 0%, #e0c3fc 100%);
 }
 
 .playground-container {
@@ -87,22 +73,23 @@
   border-radius: 12px;
   padding: 30px;
 
-  background: #d3959b; /* fallback for old browsers */
-  background: -webkit-linear-gradient(
-    to right,
-    #bfe6ba,
-    #d3959b
-  ); /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(
-    to right,
-    #bfe6ba,
-    #d3959b
-  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background-color: #8ec5fc;
+  background-image: linear-gradient(62deg, #8ec5fc 0%, #e0c3fc 100%);
 
   h1 {
     font-size: 30px;
     font-family: secondary;
     letter-spacing: 10px;
+  }
+}
+
+.button-primary {
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.5s;
+  &:hover {
+    transform: scale(1.05);
   }
 }
 
@@ -116,6 +103,12 @@
       transform: scale(1.05);
     }
   }
+}
+
+.welcome-button-group {
+  display: flex;
+  flex-direction: column;
+  row-gap: 15px;
 }
 
 .form-login {
@@ -132,6 +125,35 @@
       outline: none;
       outline: 3px solid black;
       border: none;
+    }
+  }
+}
+
+.Toastify__toast-body {
+  > div {
+    font-family: 'inter', sans-serif, 'roboto';
+    font-weight: 600;
+  }
+}
+
+.score-list {
+  margin-left: -30px;
+  li {
+    list-style: none;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    & .first-span {
+      min-width: 20px;
+      &::before {
+        content: '';
+      }
+    }
+    & .second-span {
+      min-width: 150px;
+    }
+    &:last-of-type {
+      margin-bottom: 0;
     }
   }
 }
