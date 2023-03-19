@@ -11,8 +11,12 @@ import { GameWrapper, Score } from './Game.styles';
 import ModalGameOver from './ModalGameOver';
 import useGameLogic from './useGameLogic';
 import scoreIcon from '../../../assets/reward.png';
+import axios from 'axios';
 
-interface GameProps {}
+interface GameProps {
+  userId: string;
+  token: string;
+}
 
 export enum GameState {
   RUNNING,
@@ -20,14 +24,27 @@ export enum GameState {
   PAUSED,
 }
 
-const Game: React.FC<GameProps> = ({}) => {
+const Game: React.FC<GameProps> = ({ userId, token }) => {
   const navigate = useNavigate();
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [gameState, setGameState] = useState<GameState>(GameState.RUNNING);
   const [openModalOver, setOpenModalOver] = useState<boolean>(false);
 
-  const onGameOver = () => setGameState(GameState.GAME_OVER);
+  const onGameOver = () => {
+    axios
+      .post(
+        `http://localhost:5000/api/scores/${userId}/add`,
+        { score: snakeBody.length },
+        {
+          headers: { 'Content-Type': 'application/json', Authorization: token },
+        }
+      )
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+
+    setGameState(GameState.GAME_OVER);
+  };
 
   const { snakeBody, onKeyDownHandler, foodPosition, resetGameState } =
     useGameLogic({

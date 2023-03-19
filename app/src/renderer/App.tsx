@@ -5,7 +5,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/button-has-type */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import {
@@ -35,12 +35,30 @@ const music = {
 
 const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
+type Score = {
+  id: string;
+  playerId: string;
+  player: {
+    email: string;
+  };
+  score: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
 function Homepage() {
   const [status, setStatus] = useState(Status.Login);
+  const [user, setUser] = useState({
+    name: '',
+  });
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [isLogin, setIsLogin] = useState<boolean>(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setUser(JSON.parse(localStorage.getItem('loginData') || '{}').user);
+  }, []);
 
   const validateEmail = (e: any) => {
     console.log(e.target.value);
@@ -65,7 +83,7 @@ function Homepage() {
   const welcome = () => {
     return (
       <>
-        <h1>Welcome {form.name}!</h1>
+        <h1>Welcome {user?.name}!</h1>
 
         <div className="welcome-button-group">
           <button
@@ -103,7 +121,10 @@ function Homepage() {
               transition: 'all 0.5s',
             }}
             type="button"
-            onClick={() => setIsLogin(false)}
+            onClick={() => {
+              localStorage.setItem('loginData', '');
+              setIsLogin(false);
+            }}
           >
             Log out
           </button>
@@ -113,114 +134,122 @@ function Homepage() {
   };
 
   const signIn = () => {
-    return (
-      <>
-        <form
-          className="form-login"
-          action="submit"
-          style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}
-        >
-          {status === Status.Signup ? (
-            <>
-              <label htmlFor="name">Name</label>
-              <input
-                onChange={(e: any) => {
-                  e.preventDefault();
-                  setForm({ ...form, name: e.target.value });
-                }}
-                title="name"
-                name="name"
-                type="text"
-              />
-            </>
-          ) : null}
+    const loginData = JSON.parse(localStorage.getItem('loginData') || '{}');
 
-          <label htmlFor="Email">Email</label>
-          <input
-            onChange={(e: any) => {
-              e.preventDefault();
-              setForm({ ...form, email: e.target.value });
-            }}
-            title="Email"
-            name="Email"
-            type="email"
-          />
-
-          <label htmlFor="password">Password</label>
-          <input
-            onChange={(e: any) =>
-              setForm({ ...form, password: e.target.value })
-            }
-            title="password"
-            name="password"
-            type="password"
-          />
-        </form>
-
-        <div
-          className="button-group"
-          style={{ marginTop: '10px', columnGap: '10px', display: 'flex' }}
-        >
-          <button
-            type="button"
-            onClick={() => {
-              // if (status === Status.Login) {
-              //   if (validateForm() === false) return;
-              //   // api regis account
-              //   axios
-              //     .post(
-              //       'https://snake-api-22730036.herokuapp.com/api/users/auth/login',
-              //       { email: form.email, password: form.password }
-              //     )
-              //     .then((response) => {
-              //       console.log(response);
-              //       if (response.status === 201) {
-              //         setIsLogin(true);
-              //         toast.success('Log in success');
-              //       }
-              //     })
-              //     .catch((error) => {
-              //       console.log(error);
-              //       toast.error('Something went wrong!');
-              //     });
-              // } else if (status === Status.Signup) {
-              //   setStatus(Status.Login);
-              // }
-              setIsLogin(true);
-            }}
+    if (!loginData.accessToken) {
+      return (
+        <>
+          <form
+            className="form-login"
+            action="submit"
+            style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}
           >
-            {status === Status.Signup ? 'Back' : 'Log in'}
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              if (status === Status.Signup) {
-                // api regis account
-                axios
-                  .post(
-                    'https://snake-api-22730036-pke9.vercel.app/api/users/auth/create',
-                    form
-                  )
-                  .then((response) => {
-                    console.log(response);
-                    if (response.status === 201) {
-                      toast.success('Sign up success');
-                    }
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                    toast.error('Something went wrong!');
-                  });
-              } else if (status === Status.Login) {
-                setStatus(Status.Signup);
+            {status === Status.Signup ? (
+              <>
+                <label htmlFor="name">Name</label>
+                <input
+                  onChange={(e: any) => {
+                    e.preventDefault();
+                    setForm({ ...form, name: e.target.value });
+                  }}
+                  title="name"
+                  name="name"
+                  type="text"
+                />
+              </>
+            ) : null}
+
+            <label htmlFor="Email">Email</label>
+            <input
+              onChange={(e: any) => {
+                e.preventDefault();
+                setForm({ ...form, email: e.target.value });
+              }}
+              title="Email"
+              name="Email"
+              type="email"
+            />
+
+            <label htmlFor="password">Password</label>
+            <input
+              onChange={(e: any) =>
+                setForm({ ...form, password: e.target.value })
               }
-            }}
+              title="password"
+              name="password"
+              type="password"
+            />
+          </form>
+
+          <div
+            className="button-group"
+            style={{ marginTop: '10px', columnGap: '10px', display: 'flex' }}
           >
-            Sign up
-          </button>
-        </div>
-      </>
-    );
+            <button
+              type="button"
+              onClick={() => {
+                if (status === Status.Login) {
+                  if (validateForm() === false) return;
+                  // api regis account
+                  axios
+                    .post('http://localhost:5000/api/users/auth/login', {
+                      email: form.email,
+                      password: form.password,
+                    })
+                    .then((response) => {
+                      console.log(response);
+                      if (response.status === 200) {
+                        localStorage.setItem(
+                          'loginData',
+                          JSON.stringify(response.data)
+                        );
+                        setUser(response.data.user);
+                        setIsLogin(true);
+                        toast.success('Log in success');
+                      }
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                      toast.error('Something went wrong!');
+                    });
+                } else if (status === Status.Signup) {
+                  setStatus(Status.Login);
+                }
+              }}
+            >
+              {status === Status.Signup ? 'Back' : 'Log in'}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (status === Status.Signup) {
+                  // api regis account
+                  axios
+                    .post('http://localhost:5000/api/users/auth/create', form)
+                    .then((response) => {
+                      console.log(response);
+                      if (response.status === 201) {
+                        toast.success('Sign up success');
+                      }
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                      toast.error('Something went wrong!');
+                    });
+                } else if (status === Status.Login) {
+                  setStatus(Status.Signup);
+                }
+              }}
+            >
+              Sign up
+            </button>
+          </div>
+        </>
+      );
+    }
+    setIsLogin(true);
+    navigate('/');
+    return null;
   };
 
   return (
@@ -231,7 +260,7 @@ function Homepage() {
   );
 }
 
-function Playground() {
+function Playground({ userId, token }: { userId: string; token: string }) {
   const navigate = useNavigate();
 
   // init sound
@@ -239,7 +268,7 @@ function Playground() {
   return (
     <div className="playground-container">
       <h1>Playground</h1>
-      <Game />
+      <Game userId={userId} token={token} />
     </div>
   );
 }
@@ -253,13 +282,25 @@ const mockScore = [
 ];
 
 function TopScore() {
+  const [scores, setScores] = useState<Score[]>([]);
   const navigate = useNavigate();
+
+  const getScores = () => {
+    return axios.get('http://localhost:5000/api/scores/get');
+  };
+
+  useEffect(() => {
+    getScores()
+      .then((res) => setScores(res.data))
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
     <div className="playground-container">
       <h1>Top score</h1>
       <ul className="score-list">
-        {mockScore.map((e, index) => (
-          <li key={index}>
+        {scores.map((e, index) => (
+          <li key={e.id}>
             {index === 0 ? (
               <span style={{ marginLeft: '-30px', marginTop: '-3px' }}>
                 <img
@@ -271,7 +312,7 @@ function TopScore() {
             ) : null}
 
             <span className="first-span">{index + 1}</span>
-            <span className="second-span">{e.name}</span>
+            <span className="second-span">{e.player.email}</span>
             <span>{e.score}</span>
           </li>
         ))}
@@ -289,11 +330,33 @@ function TopScore() {
 }
 
 export default function App() {
+  const [loginData, setLoginData] = useState({
+    user: { id: '' },
+    accessToken: '',
+  });
+
+  useEffect(() => {
+    setLoginData(
+      JSON.parse(
+        localStorage.getItem('loginData') ||
+          JSON.stringify({ user: { id: '' }, accessToken: '' })
+      )
+    );
+  }, []);
+
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Homepage />} />
-        <Route path="/play" element={<Playground />} />
+        <Route
+          path="/play"
+          element={
+            <Playground
+              userId={loginData.user.id}
+              token={loginData.accessToken}
+            />
+          }
+        />
         <Route path="/top-score" element={<TopScore />} />
       </Routes>
     </Router>
