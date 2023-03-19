@@ -1,8 +1,9 @@
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
-const bcrypt = require('bcryptjs')
+import { PrismaClient } from '@prisma/client'
+import * as bcrypt from 'bcryptjs'
 
-const createUser = async (req, res) => {
+const prisma = new PrismaClient()
+
+export default async (req, res) => {
   try {
     const salt = await bcrypt.genSalt(10)
     const hash = await bcrypt.hash(req.body.password, salt)
@@ -12,11 +13,8 @@ const createUser = async (req, res) => {
         password: hash,
       },
     })
-    console.log(user)
-    res.status(201).send(user)
+    res.status(201).json(user)
   } catch (error) {
     res.status(500).send(error.message)
   }
 }
-
-module.exports = { createUser }

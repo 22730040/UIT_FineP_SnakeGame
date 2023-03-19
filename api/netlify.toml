@@ -1,6 +1,6 @@
 [build]
   command = "CI= npm run build"
 
-  functions = "src/controllers/"
+  functions = "functions"
 
   publish = "public/"
