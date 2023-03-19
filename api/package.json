@@ -1,5 +1,5 @@
 {
-  "name": "deployment-example-prisma-vercel",
+  "name": "snake-api",
   "dependencies": {
     "@prisma/client": "4.11.0",
     "bcryptjs": "^2.4.3",
